@@ -1,7 +1,10 @@
 {
   "semi": true,
-  "trailingComma": "all",
   "singleQuote": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
   "printWidth": 100,
-  "tabWidth": 2
+  "endOfLine": "auto",
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+  "importOrder": ["<THIRD_PARTY_MODULES>", "<BUILTIN_MODULES>", "", "^@/(.*)$", "", "^[./]"]
 }

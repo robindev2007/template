@@ -1,3 +1,9 @@
-const a = 3;
+import { app } from "./app";
+import { config } from "./core";
+import { logger } from "./core/logger";
 
-console.log(a);
+const PORT = config.app.port;
+
+app.listen(PORT, () => {
+  logger.info(`Server is running on port ${PORT}`);
+});
