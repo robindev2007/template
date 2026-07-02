@@ -10,11 +10,11 @@
   },
   "lint-staged": {
     "*.{ts,js}": [
-      "prettier --fix",
+      "eslint --fix",
       "prettier --write"
     ],
     "*.{json,md}": [
-      "eslint --write"
+      "prettier --write"
     ]
   },
   "devDependencies": {
