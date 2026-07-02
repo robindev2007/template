@@ -1,5 +1,5 @@
-echo "🕵️‍♂️ Checking TypeScript definitions across the whole project..."
+echo "Checking TypeScript definitions across the whole project..."
 bun run typecheck
 
-echo "🔍 Running formatting and linting (lint-staged)..."
+echo "Running formatting and linting (lint-staged)..."
 bunx lint-staged
