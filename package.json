@@ -7,11 +7,17 @@
     "dev:server": "bun --hot src/server.ts",
     "dev:worker": "bun --hot src/worker.ts",
     "dev": "concurrently \"bun dev:server\" \"bun dev:worker\"",
-    "format": "prettier --write .",
+    "build:server": "bun build src/server.ts --outdir dist --target bun",
+    "build:worker": "bun build src/worker.ts --outdir dist --target bun",
+    "build": "bun run build:server && bun run build:worker",
+    "start:server": "bun dist/server.js",
+    "start:worker": "bun dist/worker.js",
+    "start": "concurrently \"bun run start:server\" \"bun run start:worker\"",
     "lint": "eslint . --fix",
-    "prepare": "husky",
+    "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{ts,js}": [
