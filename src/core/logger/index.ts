@@ -1,5 +1,7 @@
 import { createPinoLogger, ILogger, LogMetadata } from "./providers";
 
+export * from "./startup";
+
 // Initialize the chosen provider
 const loggerProvider: ILogger = createPinoLogger();
 

@@ -1,9 +1,12 @@
+import { logger, logStartup } from "@/core/logger";
+
 import { app } from "./app";
 import { config } from "./core";
-import { logger } from "./core/logger";
 
 const PORT = config.app.port;
 
 app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT}`);
+  // The logStartup function now safely reads the port pass-in parameter
+  logStartup(PORT);
+  logger.info(`Ready for connections.`);
 });
