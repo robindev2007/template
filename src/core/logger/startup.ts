@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import figlet from "figlet";
 import { execSync } from "child_process";
 import os from "os";
 
@@ -48,6 +49,9 @@ const getDashboardData = (port: number | string): Record<string, DashboardRow[]>
       ?.model.replace(/\(.*?\)/g, "")
       .trim() ?? "Unknown CPU";
   const cores = os.cpus()?.length ?? 0;
+
+  const banner = figlet.textSync("ROBIN", { font: "ANSI Shadow" });
+  console.log(chalk.cyan(banner));
 
   return {
     network: [
