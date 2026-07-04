@@ -6,7 +6,7 @@
   "scripts": {
     "dev:server": "bun --hot src/server.ts",
     "dev:worker": "bun --hot src/worker.ts",
-    "dev": "concurrently --prefix \"{name}\" --names \",[worker] \" \"bun run dev:server\" \"bun run dev:worker\"",
+    "dev": "concurrently --prefix \"{name}\" --names \",[worker] \" \"bun --env-file=.env.dev run dev:server\" \"bun --env-file=.env.dev run dev:worker\"",
     "build:server": "bun build src/server.ts --outdir dist --target bun",
     "build:worker": "bun build src/worker.ts --outdir dist --target bun",
     "build": "bun run build:server && bun run build:worker",
@@ -17,7 +17,8 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "email": "email dev --dir ./src/services/email/templates --port 3001"
   },
   "lint-staged": {
     "*.{ts,js}": [
@@ -36,8 +37,10 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@react-email/ui": "6.6.6",
     "@types/bun": "latest",
     "@types/jest": "^30.0.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/pg": "^8.20.0",
     "concurrently": "^10.0.3",
     "eslint": "^10.6.0",
@@ -62,8 +65,12 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "ioredis": "^5.11.1",
+    "nodemailer": "^9.0.3",
     "pg": "^8.22.0",
     "pino": "^10.3.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-email": "6.6.6",
     "zod": "^4.4.3"
   }
 }

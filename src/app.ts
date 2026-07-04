@@ -9,6 +9,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/public", express.static("public"));
+
 app.use(requestLogger);
 
 // Mount the entire API router under v1

@@ -1,6 +1,10 @@
-import { createElement } from "react";
+import { Worker } from "bullmq";
+import { createElement, type FunctionComponent } from "react";
+
+import { redisConfig } from "@/core/database/redis";
 
 import { EMAIL_CONFIG } from "./email.constants";
+import type { EmailJobData } from "./email.queue";
 import { renderEmailToHtml, renderEmailToPlainText } from "./email.renderer";
 import type {
   EmailTemplateName,
@@ -22,25 +26,30 @@ const templateComponentMap: {
   "reset-password": ResetPasswordEmail as (props: ResetPasswordEmailProps) => React.JSX.Element,
 };
 
-export async function sendEmail<T extends EmailTemplateName>(
-  to: string,
-  subject: string,
-  template: T,
-  props: EmailTemplatePropsMap[T],
-) {
-  const Component = templateComponentMap[template];
-  const element = createElement(Component, props);
+export const setupEmailWorker = () => {
+  new Worker<EmailJobData>(
+    "email",
+    async (job) => {
+      const { to, subject, template, props } = job.data;
 
-  const [html, text] = await Promise.all([
-    renderEmailToHtml(element),
-    renderEmailToPlainText(element),
-  ]);
+      const Component = templateComponentMap[template] as FunctionComponent;
+      const element = createElement(Component, props as unknown as Record<string, unknown>);
 
-  return sendEmailViaProvider({
-    from: EMAIL_CONFIG.from,
-    to,
-    subject,
-    html,
-    text,
-  });
-}
+      const [html, text] = await Promise.all([
+        renderEmailToHtml(element),
+        renderEmailToPlainText(element),
+      ]);
+
+      await sendEmailViaProvider({
+        from: EMAIL_CONFIG.from,
+        to,
+        subject,
+        html,
+        text,
+      });
+    },
+    {
+      connection: redisConfig,
+    },
+  );
+};

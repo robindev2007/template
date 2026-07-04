@@ -8,6 +8,8 @@ export const redisConfig = {
   host: config.db.redisHost,
   port: config.db.redisPort,
   password: config.db.redisPassword,
+  username: config.db.redisUsername,
+
   // Add other connection options as needed
 };
 
