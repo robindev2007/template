@@ -5,5 +5,6 @@
     "source.fixAll.eslint": "explicit"
   },
   "eslint.validate": ["javascript", "typescript"],
-  "eslint.useFlatConfig": true
+  "eslint.useFlatConfig": true,
+  "cSpell.words": ["bullboard"]
 }

@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { logger } from "@/core/logger";
-
 const envSchema = z.object({
   PROJECT_NAME: z.string().default("My App"),
 
@@ -20,6 +18,12 @@ const envSchema = z.object({
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
+
+  JWT_SECRET: z.string().default("dev-secret-change-in-production"),
+
+  BULL_USER: z.string().default("admin"),
+  BULL_PASS: z.string().default("admin"),
+  BULL_SECRET: z.string().default("bull-secret-change-in-production"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
@@ -31,7 +35,7 @@ if (!parsedEnv.success) {
     message: issue.message,
   }));
 
-  logger.error("❌ Invalid environment variables detected at startup", {
+  console.error("❌ Invalid environment variables detected at startup", {
     errors: formattedErrors,
   });
 

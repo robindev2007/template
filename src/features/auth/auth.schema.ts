@@ -1,21 +1,23 @@
 import z from "zod";
 
-const SignupSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8).max(32),
+export const SignupSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(128),
+  name: z.string().min(1).max(100).optional(),
 });
 
-const LoginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8).max(32),
+export const VerifyEmailSchema = z.object({
+  email: z.string().email(),
+  otp: z.string().length(6),
+});
+
+export const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
 });
 
 export type AuthSchema = {
   signup: z.infer<typeof SignupSchema>;
+  "verify-email": z.infer<typeof VerifyEmailSchema>;
   login: z.infer<typeof LoginSchema>;
-};
-
-export const AuthSchema = {
-  signup: SignupSchema,
-  login: LoginSchema,
 };

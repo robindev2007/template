@@ -12,9 +12,19 @@ export type EmailTemplatePropsMap = {
   "reset-password": ResetPasswordEmailProps;
 };
 
-export interface SendEmailPayload<T extends EmailTemplateName> {
-  to: string;
-  subject: string;
-  template: T;
-  props: EmailTemplatePropsMap[T];
-}
+type WelcomeJobPayload = {
+  template: "welcome";
+  props: WelcomeEmailProps;
+};
+
+type VerifyJobPayload = {
+  template: "verify-email";
+  props: VerifyEmailProps;
+};
+
+type ResetJobPayload = {
+  template: "reset-password";
+  props: ResetPasswordEmailProps;
+};
+
+export type EmailJobPayload = WelcomeJobPayload | VerifyJobPayload | ResetJobPayload;

@@ -21,6 +21,14 @@ export const config = {
     smtpUser: env.SMTP_USER ?? "",
     smtpPass: env.SMTP_PASS ?? "",
   },
+  auth: {
+    jwtSecret: env.JWT_SECRET,
+  },
+  bullboard: {
+    user: env.BULL_USER,
+    pass: env.BULL_PASS,
+    secret: env.BULL_SECRET,
+  },
   app: {
     name: env.PROJECT_NAME,
     env: env.NODE_ENV,

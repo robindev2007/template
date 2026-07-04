@@ -19,7 +19,7 @@ export type {
   VerifyEmailProps,
   ResetPasswordEmailProps,
   EmailTemplateName,
-  SendEmailPayload,
+  EmailJobPayload,
 } from "./email.types";
 
 export type { EmailJobData } from "./email.queue";

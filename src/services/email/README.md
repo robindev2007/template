@@ -39,7 +39,6 @@ import { sendEmail } from "@/services/email";
 await sendEmail("user@example.com", "Welcome to My App", "welcome", {
   companyName: "My App",
   userName: "Jane",
-  dashboardUrl: "https://app.myapp.com/dashboard",
 });
 ```
 
@@ -61,7 +60,7 @@ import { createElement } from "react";
 import { renderEmailToHtml, renderEmailToPlainText, WelcomeEmail } from "@/services/email";
 
 const html = await renderEmailToHtml(
-  createElement(WelcomeEmail, { companyName: "Acme", userName: "Jane", dashboardUrl: "#" }),
+  createElement(WelcomeEmail, { companyName: "Acme", userName: "Jane" }),
 );
 ```
 

@@ -9,5 +9,5 @@ const loggerProvider: ILogger = createPinoLogger();
 export const logger = {
   info: <T extends LogMetadata>(msg: string, meta?: T) => loggerProvider.info(msg, meta),
   error: <T extends LogMetadata>(msg: string, meta?: T) => loggerProvider.error(msg, meta),
-  warn: <T extends LogMetadata>(msg: string, meta?: T) => loggerProvider.info(msg, meta), // Assuming warn is handled as info for now
+  warn: <T extends LogMetadata>(msg: string, meta?: T) => loggerProvider.warn(msg, meta),
 };

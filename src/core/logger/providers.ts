@@ -1,4 +1,4 @@
-// src/core/logger/providers.ts
+import chalk from "chalk";
 import pino from "pino";
 
 export type LogMetadata = Record<string, unknown>;
@@ -10,8 +10,17 @@ export interface ILogger {
   success: <T extends LogMetadata>(message: string, meta?: T) => void;
 }
 
+// Enable colors on Windows (chalk auto-detects TTY, but pino worker may not be a TTY)
+chalk.level = 3;
+
+const color = {
+  info: (msg: string) => chalk.green(msg),
+  warn: (msg: string) => chalk.yellowBright(msg),
+  error: (msg: string) => chalk.redBright(msg),
+  success: (msg: string) => chalk.greenBright(msg),
+};
+
 export const createPinoLogger = (): ILogger => {
-  // Setup pino-pretty for development
   const isDev = process.env.NODE_ENV !== "production";
 
   const logger = pino({
@@ -30,9 +39,9 @@ export const createPinoLogger = (): ILogger => {
 
   return {
     info: (message, meta) => logger.info(meta as LogMetadata, message),
-    error: (message, meta) => logger.error(meta as LogMetadata, message),
-    warn: (message, meta) => logger.warn(meta as LogMetadata, message),
-    // Map success to info, but include a custom tag in metadata
-    success: (message, meta) => logger.info({ ...meta, type: "success" }, `✅ ${message}`),
+    error: (message, meta) => logger.error(meta as LogMetadata, color.error(message)),
+    warn: (message, meta) => logger.warn(meta as LogMetadata, color.warn(message)),
+    success: (message, meta) =>
+      logger.info({ ...meta, type: "success" }, color.success(`✅ ${message}`)),
   };
 };

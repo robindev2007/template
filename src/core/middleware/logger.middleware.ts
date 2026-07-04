@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 import { logger } from "@/core/logger";
 
@@ -7,11 +7,31 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
   res.on("finish", () => {
     const duration = Date.now() - startTime;
-    logger.info(`HTTP ${req.method} ${req.url}`, {
-      status: res.statusCode,
-      duration: `${duration}ms`,
-      ip: req.ip,
-    });
+    const status = res.statusCode;
+
+    const err = res.locals?.["error"] as { message: string; stack?: string } | undefined;
+
+    const msg = [
+      `${req.method} ${req.originalUrl || req.url}`,
+      `${status}`,
+      `${duration}ms`,
+      req.ip,
+      err?.message,
+    ]
+      .filter(Boolean)
+      .join(" — ");
+
+    if (status >= 500) {
+      logger.error(msg);
+    } else if (status >= 400) {
+      logger.warn(msg);
+    } else {
+      logger.info(msg);
+    }
+
+    if (err?.stack) {
+      logger.error(`TRACE:\n${err.stack}`);
+    }
   });
 
   next();

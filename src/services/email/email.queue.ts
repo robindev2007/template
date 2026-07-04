@@ -2,14 +2,12 @@ import { Queue } from "bullmq";
 
 import { redisConfig } from "@/core/database/redis";
 
-import type { EmailTemplateName, EmailTemplatePropsMap } from "./email.types";
+import type { EmailJobPayload } from "./email.types";
 
-export type EmailJobData<T extends EmailTemplateName = EmailTemplateName> = {
+export type EmailJobData = {
   to: string;
   subject: string;
-  template: T;
-  props: EmailTemplatePropsMap[T];
-};
+} & EmailJobPayload;
 
 export const emailQueue = new Queue<EmailJobData>("email", {
   connection: redisConfig,
