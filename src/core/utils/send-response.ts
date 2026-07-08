@@ -52,11 +52,12 @@ const validationError = <T>(res: Response, errors?: T, message = "Validation fai
 const tooManyRequests = (res: Response, message = "Too many requests") =>
   send(res, StatusCodes.TOO_MANY_REQUESTS, message);
 
-const error_ = (
+const error_ = <T>(
   res: Response,
   message = "Internal server error",
   statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR,
-) => send(res, statusCode, message);
+  data?: T,
+) => send(res, statusCode, message, data);
 
 export const sendResponse = {
   ok,

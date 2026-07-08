@@ -1,12 +1,24 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { sendResponse } from "@/core/utils";
+import { JwtUtils } from "@/core/utils/jwt";
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization;
+  const header = req.headers["authorization"];
 
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
+  if (!header?.startsWith("Bearer ")) {
+    sendResponse.unauthorized(res, "Authentication required.");
+    return;
   }
 
-  // Later: add JWT verification logic here
+  const token = header.split(" ")[1]!;
+  const payload = JwtUtils.verify(token);
+
+  if (!payload) {
+    sendResponse.unauthorized(res, "Invalid or expired token.");
+    return;
+  }
+
+  req.user = payload;
   next();
 };

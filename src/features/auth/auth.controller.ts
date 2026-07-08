@@ -7,7 +7,7 @@ import { AuthService } from "./auth.service";
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await AuthService.signup(req.body);
-    sendResponse.created(res, "Verification email sent", result);
+    sendResponse.created(res, result.message, result);
   } catch (err) {
     next(err);
   }
@@ -15,8 +15,12 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 
 export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await AuthService.verifyEmail(req.body);
-    sendResponse.ok(res, "Email verified", result);
+    const body = {
+      email: req.body?.["email"] ?? (req.query["email"] as string),
+      token: req.body?.["token"] ?? (req.query["token"] as string),
+    };
+    const result = await AuthService.verifyEmail(body);
+    sendResponse.ok(res, "Email verified successfully", result);
   } catch (err) {
     next(err);
   }

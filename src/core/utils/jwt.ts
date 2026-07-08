@@ -6,10 +6,13 @@ export interface JwtPayload {
   userId: string;
   email: string;
   role: string;
+  sessionId?: string;
 }
 
 const sign = (payload: JwtPayload): string => {
-  return jwt.sign(payload, config.auth.jwtSecret, { expiresIn: "7d" });
+  return jwt.sign(payload, config.auth.jwtSecret, {
+    expiresIn: config.auth.jwtExpiresIn as string & jwt.SignOptions["expiresIn"],
+  });
 };
 
 const verify = (token: string): JwtPayload | null => {

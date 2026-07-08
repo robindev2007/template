@@ -1,14 +1,9 @@
-// src/core/config/env.ts
-
 import { env } from "./env";
 
-// Export a grouped object
 export const config = {
   db: {
     url: env.DATABASE_URL,
-
     redisUrl: `redis://${env.REDIS_USERNAME}:${env.REDIS_PASSWORD}@${env.REDIS_HOST}:${env.REDIS_PORT}/0`,
-
     redisHost: env.REDIS_HOST,
     redisPort: env.REDIS_PORT,
     redisUsername: env.REDIS_USERNAME,
@@ -23,6 +18,9 @@ export const config = {
   },
   auth: {
     jwtSecret: env.JWT_SECRET,
+    jwtExpiresIn: env.JWT_EXPIRES_IN,
+    tokenExpiryMinutes: env.TOKEN_EXPIRY_MINUTES,
+    sessionExpiryDays: env.SESSION_EXPIRY_DAYS,
   },
   bullboard: {
     user: env.BULL_USER,
@@ -33,5 +31,15 @@ export const config = {
     name: env.PROJECT_NAME,
     env: env.NODE_ENV,
     port: env.PORT,
+    serverUrl: env.SERVER_URL,
+  },
+  cors: {
+    origin: env.CORS_ORIGIN,
+  },
+  rateLimit: {
+    windowMs: env.RATE_LIMIT_WINDOW_MS,
+    max: env.RATE_LIMIT_MAX,
+    authWindowMs: env.RATE_LIMIT_AUTH_WINDOW_MS,
+    authMax: env.RATE_LIMIT_AUTH_MAX,
   },
 };

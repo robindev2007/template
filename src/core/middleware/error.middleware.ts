@@ -45,7 +45,7 @@ export const globalErrorHandler = (
       return;
     }
 
-    sendResponse.error(res, err.message, err.statusCode);
+    sendResponse.error(res, err.message, err.statusCode, err.data);
     return;
   }
 
