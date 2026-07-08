@@ -32,6 +32,7 @@ export const config = {
     env: env.NODE_ENV,
     port: env.PORT,
     serverUrl: env.SERVER_URL,
+    frontendUrl: env.FRONTEND_URL,
   },
   cors: {
     origin: env.CORS_ORIGIN,

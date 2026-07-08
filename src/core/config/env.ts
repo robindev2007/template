@@ -26,6 +26,8 @@ const envSchema = z.object({
   BULL_PASS: z.string().default("admin"),
   BULL_SECRET: z.string().default("bull-secret-change-in-production"),
 
+  FRONTEND_URL: z.string().default("http://localhost:5173"),
+
   CORS_ORIGIN: z.string().default("*"),
 
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000),

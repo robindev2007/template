@@ -10,10 +10,8 @@ import type { AuthSchema } from "./auth.schema";
 import { SessionService } from "./session.service";
 import { VerificationTokenService } from "./verification-token.service";
 
-const GENERIC_SUCCESS = "If an account with that email exists, a verification link has been sent.";
-
 async function sendVerificationEmail(email: string, token: string) {
-  const url = `${config.app.serverUrl}/api/v1/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`;
+  const url = `${config.app.frontendUrl}/verify-email?token=${token}&email=${encodeURIComponent(email)}`;
 
   await emailQueue.add("send-verify-email", {
     to: email,
@@ -27,6 +25,22 @@ async function sendVerificationEmail(email: string, token: string) {
   });
 }
 
+async function sendResetPasswordEmail(email: string, userName: string, token: string) {
+  const url = `${config.app.frontendUrl}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
+
+  await emailQueue.add("send-reset-password-email", {
+    to: email,
+    subject: "Reset your password",
+    template: "reset-password",
+    props: {
+      companyName: config.app.name,
+      userName,
+      resetUrl: url,
+      expiryMinutes: config.auth.tokenExpiryMinutes,
+    },
+  });
+}
+
 const signup = async (payload: AuthSchema["signup"]) => {
   const existing = await prisma.user.findUnique({
     where: { email: payload.email },
@@ -34,8 +48,7 @@ const signup = async (payload: AuthSchema["signup"]) => {
 
   if (existing) {
     if (existing.verified) {
-      logger.info("Signup attempt for existing verified email", { email: payload.email });
-      return { message: GENERIC_SUCCESS };
+      throwError(StatusCodes.BAD_REQUEST, "Email already exists. Please login instead.");
     }
 
     const { token } = await VerificationTokenService.create(
@@ -46,7 +59,7 @@ const signup = async (payload: AuthSchema["signup"]) => {
 
     await sendVerificationEmail(existing.email, token);
 
-    return { message: GENERIC_SUCCESS };
+    return;
   }
 
   const password = await Bun.password.hash(payload.password);
@@ -68,8 +81,6 @@ const signup = async (payload: AuthSchema["signup"]) => {
   );
 
   await sendVerificationEmail(user.email, token);
-
-  return { message: GENERIC_SUCCESS };
 };
 
 const verifyEmail = async (payload: AuthSchema["verify-email"]) => {
@@ -143,7 +154,15 @@ const login = async (payload: AuthSchema["login"]) => {
   }
 
   if (!user!.verified) {
-    throwError(StatusCodes.FORBIDDEN, "Please verify your email address before signing in.");
+    const { token } = await VerificationTokenService.create(
+      user!.id,
+      "magic_link",
+      config.auth.tokenExpiryMinutes,
+    );
+
+    await sendVerificationEmail(user!.email, token);
+
+    return { redirectToSuccessPage: true };
   }
 
   const session = await SessionService.create(user!.id);
@@ -167,4 +186,87 @@ const login = async (payload: AuthSchema["login"]) => {
   };
 };
 
-export const AuthService = { signup, verifyEmail, login };
+const forgotPassword = async (payload: AuthSchema["forgot-password"]) => {
+  const user = await prisma.user.findUnique({
+    where: { email: payload.email },
+  });
+
+  if (!user) {
+    throwError(StatusCodes.NOT_FOUND, "Email not found.");
+  }
+
+  if (!user.verified) {
+    throwError(StatusCodes.BAD_REQUEST, "Email not verified.");
+  }
+
+  const { token } = await VerificationTokenService.create(
+    user.id,
+    "reset_password",
+    config.auth.tokenExpiryMinutes,
+  );
+
+  await sendResetPasswordEmail(user.email, user.name ?? "User", token);
+};
+
+const resetPassword = async (payload: AuthSchema["reset-password"]) => {
+  const user = await prisma.user.findUnique({
+    where: { email: payload.email },
+  });
+
+  if (!user) {
+    throwError(StatusCodes.BAD_REQUEST, "Invalid or expired reset link.");
+  }
+
+  const record = await VerificationTokenService.validate(user!.id, "reset_password", payload.token);
+
+  if (!record) {
+    throwError(StatusCodes.BAD_REQUEST, "Invalid or expired reset link.");
+  }
+
+  const password = await Bun.password.hash(payload.password);
+
+  await prisma.user.update({
+    where: { id: user!.id },
+    data: { password },
+  });
+
+  await SessionService.deleteAllForUser(user!.id);
+
+  logger.info("Password reset successfully", { userId: user!.id });
+};
+
+const changePassword = async (userId: string, payload: AuthSchema["change-password"]) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throwError(StatusCodes.UNAUTHORIZED, "Invalid credentials.");
+  }
+
+  const valid = await Bun.password.verify(payload.currentPassword, user!.password);
+
+  if (!valid) {
+    throwError(StatusCodes.UNAUTHORIZED, "Current password is incorrect.");
+  }
+
+  const password = await Bun.password.hash(payload.newPassword);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password },
+  });
+
+  await SessionService.deleteAllForUser(userId);
+
+  logger.info("Password changed successfully", { userId });
+};
+
+export const AuthService = {
+  signup,
+  verifyEmail,
+  login,
+  forgotPassword,
+  resetPassword,
+  changePassword,
+};

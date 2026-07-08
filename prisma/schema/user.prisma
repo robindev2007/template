@@ -1,0 +1,50 @@
+enum TokenType {
+    magic_link
+    reset_password
+    new_email
+}
+
+model User {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    password  String
+    name      String?
+    role      Role     @default(user)
+    verified  Boolean  @default(false)
+    emailNew  String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    verificationTokens VerificationToken[]
+    sessions           Session[]
+}
+
+model VerificationToken {
+    id        String    @id @default(cuid())
+    token     String    @unique
+    type      TokenType
+    userId    String
+    user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    expiresAt DateTime
+    usedAt    DateTime?
+    createdAt DateTime  @default(now())
+
+    @@index([userId, type])
+    @@index([token])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    userId       String
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    token        String   @unique
+    refreshToken String?
+    userAgent    String?
+    ipAddress    String?
+    expiresAt    DateTime
+    lastUsedAt   DateTime @default(now())
+    createdAt    DateTime @default(now())
+
+    @@index([userId])
+    @@index([token])
+}

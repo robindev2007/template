@@ -16,8 +16,12 @@ const config: Config = {
   },
 
   moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@/prisma/(.*)$": "<rootDir>/prisma/generated/prisma/$1",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
+
+  setupFiles: ["<rootDir>/jest.setup.ts"],
 
   clearMocks: true,
   collectCoverage: false,

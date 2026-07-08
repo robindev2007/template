@@ -1,25 +1,45 @@
 import { Router } from "express";
 
-import { authLimiter, authorize, identify, validateBody } from "@/core/middleware";
+import { authLimiter, isAuthenticated, validateBody } from "@/core/middleware";
 
-import { login, signup, verifyEmail } from "./auth.controller";
-import { LoginSchema, SignupSchema, VerifyEmailSchema } from "./auth.schema";
+import { AuthController } from "./auth.controller";
+import { AuthSchema } from "./auth.schema";
 
 const route = Router();
 
-route.post("/signup", authLimiter, validateBody(SignupSchema), signup);
+route.post("/signup", authLimiter, validateBody(AuthSchema.SignupSchema), AuthController.signup);
 
-route.post("/verify-email", authLimiter, validateBody(VerifyEmailSchema), verifyEmail);
-route.get("/verify-email", authLimiter, verifyEmail);
+route.post(
+  "/verify-email",
+  authLimiter,
+  validateBody(AuthSchema.VerifyEmailSchema),
+  AuthController.verifyEmail,
+);
 
-route.post("/login", authLimiter, validateBody(LoginSchema), login);
+route.get("/verify-email", authLimiter, AuthController.verifyEmail);
 
-route.get("/me", identify, (req, res) => {
-  res.json({ user: req.user });
-});
+route.post("/login", authLimiter, validateBody(AuthSchema.LoginSchema), AuthController.login);
 
-route.get("/admin", identify, authorize("admin"), (_req, res) => {
-  res.json({ message: "Admin only" });
-});
+route.post(
+  "/forgot-password",
+  authLimiter,
+  validateBody(AuthSchema.ForgotPasswordSchema),
+  AuthController.forgotPassword,
+);
+
+route.post(
+  "/reset-password",
+  authLimiter,
+  validateBody(AuthSchema.ResetPasswordSchema),
+  AuthController.resetPassword,
+);
+
+route.post(
+  "/change-password",
+  authLimiter,
+  isAuthenticated,
+  validateBody(AuthSchema.ChangePasswordSchema),
+  AuthController.changePassword,
+);
 
 export const authRoute = route;

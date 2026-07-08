@@ -4,8 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev:server": "bun --hot src/server.ts",
-    "dev:worker": "bun --hot src/worker.ts",
+    "dev:server": "bun --watch --env-file=.env src/server.ts",
+    "dev:worker": "bun --watch --env-file=.env src/worker.ts",
     "dev": "bun run scripts/dev-runner.ts",
     "build:server": "bun build src/server.ts --outdir dist --target bun",
     "build:worker": "bun build src/worker.ts --outdir dist --target bun",

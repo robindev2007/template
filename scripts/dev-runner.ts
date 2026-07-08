@@ -1,8 +1,10 @@
-const server = Bun.spawn(["bun", "--hot", "src/server.ts"], {
+import { logger } from "@/core";
+
+const server = Bun.spawn(["bun", "--watch", "--env-file=.env", "src/server.ts"], {
   stdio: ["inherit", "pipe", "pipe"],
 });
 
-const worker = Bun.spawn(["bun", "--hot", "src/worker.ts"], {
+const worker = Bun.spawn(["bun", "--watch", "--env-file=.env", "src/worker.ts"], {
   stdio: ["inherit", "pipe", "pipe"],
 });
 
@@ -18,10 +20,10 @@ async function pipeStream(stream: ReadableStream<Uint8Array>, prefix: string) {
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? "";
     for (const line of lines) {
-      console.log(`${prefix}${line}`);
+      logger.info(`${prefix}${line}`);
     }
   }
-  if (buffer) console.log(`${prefix}${buffer}`);
+  if (buffer) logger.info(`${prefix}${buffer}`);
 }
 
 pipeStream(server.stdout, "");
