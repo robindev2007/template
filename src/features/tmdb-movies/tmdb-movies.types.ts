@@ -74,19 +74,6 @@ export interface TMDBWatchProvider {
   display_priority: number;
 }
 
-export interface TMDBProvider {
-  display_priorities: Record<string, number>;
-  display_priority: number;
-  logo_path: string;
-  provider_name: string;
-  provider_id: number;
-  priority: number;
-}
-
-export interface TMDBProviderListResponse {
-  results: TMDBProvider[];
-}
-
 export interface TMDBWatchProviders {
   id: number;
   results: Record<

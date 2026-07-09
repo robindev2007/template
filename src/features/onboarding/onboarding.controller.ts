@@ -2,9 +2,10 @@ import { config } from "@/core/config";
 import { GENRES_BY_TMDB_ID, WATCH_PREFERENCES, WATCH_PROVIDERS } from "@/core/constants/onboarding";
 import { sendResponse } from "@/core/utils";
 import { catchAsync } from "@/core/utils/catch-async";
+import { AVAILABLE_FILTERS } from "@/features/tmdb-movies/available-filters";
 import { MoviesService } from "@/features/tmdb-movies/tmdb-movies.service";
 
-const getOnboardingData = catchAsync(async (_req, res) => {
+const getAppData = catchAsync(async (_req, res) => {
   const baseUrl = config.app.serverUrl.replace(/\/+$/, "");
   const buildImage = (path: string) => `${baseUrl}${path}`;
 
@@ -25,9 +26,10 @@ const getOnboardingData = catchAsync(async (_req, res) => {
       };
     }),
     watchProviders: WATCH_PROVIDERS,
+    availableFilters: AVAILABLE_FILTERS,
   };
 
-  sendResponse.ok(res, "Onboarding data retrieved", data);
+  sendResponse.ok(res, "App data retrieved", data);
 });
 
-export const OnboardingController = { getOnboardingData };
+export const OnboardingController = { getAppData };

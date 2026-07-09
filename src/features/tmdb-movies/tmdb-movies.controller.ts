@@ -1,7 +1,6 @@
 import { sendResponse } from "@/core/utils";
 import { catchAsync } from "@/core/utils/catch-async";
 
-import { AVAILABLE_FILTERS } from "./available-filters";
 import { MoviesService } from "./tmdb-movies.service";
 import type { DiscoverFilters } from "./tmdb-movies.types";
 
@@ -23,25 +22,8 @@ const getAvailability = catchAsync(async (req, res) => {
   sendResponse.ok(res, "Availability retrieved", result);
 });
 
-const getGenres = catchAsync(async (_req, res) => {
-  const result = await MoviesService.getMovieGenres();
-  sendResponse.ok(res, "Movie genres retrieved", result);
-});
-
-const getWatchProviders = catchAsync(async (_req, res) => {
-  const result = await MoviesService.getWatchProviders();
-  sendResponse.ok(res, "Watch providers retrieved", result);
-});
-
-const getAvailableFilters = catchAsync(async (_req, res) => {
-  sendResponse.ok(res, "Available filters retrieved", AVAILABLE_FILTERS);
-});
-
 export const MoviesController = {
   discover,
   getById,
   getAvailability,
-  getGenres,
-  getWatchProviders,
-  getAvailableFilters,
 };

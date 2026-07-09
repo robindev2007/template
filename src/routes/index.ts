@@ -4,6 +4,7 @@ import { authRoute } from "@/features/auth/auth.routes";
 import { favoritesRoute } from "@/features/favorites/favorites.routes";
 import { onboardingRoute } from "@/features/onboarding/onboarding.routes";
 import { ratingsRoute } from "@/features/ratings/ratings.routes";
+import { recommendationsRoute } from "@/features/recommendations/recommendations.routes";
 import { moviesRoute } from "@/features/tmdb-movies/tmdb-movies.routes";
 import { userRoute } from "@/features/users/user.routes";
 import { watchlistRoute } from "@/features/watchlist/watchlist.routes";
@@ -17,5 +18,6 @@ router.use("/tmdb-movies", moviesRoute);
 router.use("/", ratingsRoute);
 router.use("/", favoritesRoute);
 router.use("/", watchlistRoute);
+router.use("/recommendations", recommendationsRoute);
 
 export { router };

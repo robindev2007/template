@@ -8,7 +8,6 @@ import type {
   TMDBMovie,
   TMDBMovieDetails,
   TMDBPaginatedResponse,
-  TMDBProviderListResponse,
   TMDBWatchProviders,
 } from "./tmdb-movies.types";
 
@@ -65,18 +64,9 @@ const getMovieGenres = async () => {
   return fetchFromTMDB<TMDBGenreResponse>("/genre/movie/list");
 };
 
-const getWatchProviders = async () => {
-  const data = await fetchFromTMDB<TMDBProviderListResponse>("/watch/providers/movie");
-
-  return {
-    results: data.results.map(({ ...rest }) => rest),
-  };
-};
-
 export const MoviesService = {
   discover,
   getById,
   getAvailability,
   getMovieGenres,
-  getWatchProviders,
 };

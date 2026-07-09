@@ -6,6 +6,6 @@ import { OnboardingController } from "./onboarding.controller";
 
 const route = Router();
 
-route.get("/onboarding", authorize(), OnboardingController.getOnboardingData);
+route.get("/app-data", authorize(), OnboardingController.getAppData);
 
 export const onboardingRoute = route;

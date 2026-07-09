@@ -14,11 +14,6 @@ router.get(
   MoviesController.discover,
 );
 
-router.get("/genres/movie", authorize(), MoviesController.getGenres);
-
-router.get("/watch/providers", authorize(), MoviesController.getWatchProviders);
-router.get("/available-filters", authorize(), MoviesController.getAvailableFilters);
-
 router.get(
   "/movies/:id",
   authorize(),

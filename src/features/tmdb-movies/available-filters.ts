@@ -18,17 +18,42 @@ export const AVAILABLE_FILTERS: FilterGroup[] = [
     title: "Who's Watching?",
     type: "single",
     options: [
-      { label: "Just Me", emoji: "👤", value: "just-me" },
-      { label: "Couple", emoji: "❤️", value: "couple" },
-      { label: "Family", emoji: "👨‍👩‍👧", value: "family" },
-      { label: "Friends", emoji: "👥", value: "friends" },
+      {
+        label: "Just Me",
+        emoji: "👤",
+        value: "just-me",
+        tmdbParams: { sort_by: "vote_average.desc", "vote_count.gte": 200 },
+      },
+      {
+        label: "Couple",
+        emoji: "❤️",
+        value: "couple",
+        tmdbParams: { with_genres: "10749,35,18" },
+      },
+      {
+        label: "Family",
+        emoji: "👨‍👩‍👧",
+        value: "family",
+        tmdbParams: { with_genres: "10751,16,12,35" },
+      },
+      {
+        label: "Friends",
+        emoji: "👥",
+        value: "friends",
+        tmdbParams: { with_genres: "35,28,12" },
+      },
       {
         label: "Kids",
         emoji: "🧒",
         value: "kids",
-        tmdbParams: { without_genres: "12,28,53,27,10749,9648,80" },
+        tmdbParams: { with_genres: "16,10751,12,35", without_genres: "28,53,27,10749,9648,80" },
       },
-      { label: "Group", emoji: "👨‍👩‍👧‍👦", value: "group" },
+      {
+        label: "Group",
+        emoji: "👨‍👩‍👧‍👦",
+        value: "group",
+        tmdbParams: { sort_by: "popularity.desc" },
+      },
     ],
   },
   {
