@@ -5,6 +5,9 @@ export interface UserProfile {
   role: string;
   provider: string | null;
   verified: boolean;
+  watchPreference: string | null;
+  favoriteGenres: string[];
+  favoriteProviders: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,6 +19,9 @@ export const profileSelect = {
   role: true,
   provider: true,
   verified: true,
+  watchPreference: true,
+  favoriteGenres: true,
+  favoriteProviders: true,
   createdAt: true,
   updatedAt: true,
 } as const;

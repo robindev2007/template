@@ -4,7 +4,7 @@ const envSchema = z.object({
   PROJECT_NAME: z.string().default("My App"),
 
   PORT: z.coerce.number().default(3000),
-  SERVER_URL: z.url().default("http://localhost:3000"),
+  SERVER_URL: z.url().default("http://localhost:5037"),
 
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
@@ -20,6 +20,9 @@ const envSchema = z.object({
   SMTP_PASS: z.string().optional(),
 
   GOOGLE_CLIENT_ID: z.string(),
+
+  TMDB_API_KEY: z.string(),
+  TMDB_BASE_URL: z.string().default("https://api.themoviedb.org/3"),
 
   JWT_SECRET: z.string().default("dev-secret-change-in-production"),
   JWT_EXPIRES_IN: z.string().default("7d"),

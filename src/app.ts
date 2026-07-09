@@ -7,6 +7,8 @@ import { sendResponse } from "@/core/utils";
 import { mountBullBoard } from "@/features/bullboard";
 import { router as apiRouter } from "@/routes";
 
+import { MoviesService } from "./features/tmdb-movies/tmdb-movies.service";
+
 const app = express();
 
 app.use(express.json());
@@ -21,7 +23,9 @@ app.use(requestLogger);
 mountBullBoard(app);
 
 app.get("/", async (req, res) => {
-  sendResponse.ok(res, "Welcome to the API");
+  const movies = await MoviesService.discover({});
+
+  sendResponse.ok(res, "Welcome to the API", movies);
 });
 
 app.use("/api/v1", apiRouter);

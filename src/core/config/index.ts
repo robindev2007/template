@@ -16,6 +16,10 @@ export const config = {
     smtpUser: env.SMTP_USER ?? "",
     smtpPass: env.SMTP_PASS ?? "",
   },
+  tmdb: {
+    apiKey: env.TMDB_API_KEY,
+    baseUrl: env.TMDB_BASE_URL,
+  },
   auth: {
     googleClientId: env.GOOGLE_CLIENT_ID,
     jwtSecret: env.JWT_SECRET,

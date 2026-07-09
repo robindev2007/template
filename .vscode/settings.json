@@ -6,5 +6,5 @@
   },
   "eslint.validate": ["javascript", "typescript"],
   "eslint.useFlatConfig": true,
-  "cSpell.words": ["bullboard"]
+  "cSpell.words": ["bullboard", "TMDB"]
 }
