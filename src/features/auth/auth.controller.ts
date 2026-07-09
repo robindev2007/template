@@ -1,78 +1,76 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request } from "express";
 
 import { sendResponse } from "@/core/utils";
+import { catchAsync } from "@/core/utils/catch-async";
 
 import { AuthService } from "./auth.service";
 
-const signup = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await AuthService.signup(req.body);
-    sendResponse.created(res, "Check your email for the verification link.");
-  } catch (err) {
-    next(err);
+function detectDeviceType(req: Request): "web" | "android" | "ios" | undefined {
+  const ua = (req.headers["user-agent"] ?? "").toLowerCase();
+
+  if (/android/.test(ua)) return "android";
+  if (/iphone|ipad|ipod/.test(ua)) return "ios";
+
+  return "web";
+}
+
+const signup = catchAsync(async (req, res) => {
+  await AuthService.signup(req.body);
+  sendResponse.created(res, "Check your email for the verification link.");
+});
+
+const verifyEmail = catchAsync(async (req, res) => {
+  const body = {
+    email: req.body?.["email"] ?? (req.query["email"] as string),
+    token: req.body?.["token"] ?? (req.query["token"] as string),
+  };
+  const result = await AuthService.verifyEmail(body);
+  sendResponse.ok(res, "Email verified successfully", result);
+});
+
+const login = catchAsync(async (req, res) => {
+  const result = await AuthService.login(req.body, detectDeviceType(req));
+
+  if ("redirectToSuccessPage" in result) {
+    sendResponse.ok(res, "Please verify your email address. A new link has been sent.", result);
+    return;
   }
-};
 
-const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const body = {
-      email: req.body?.["email"] ?? (req.query["email"] as string),
-      token: req.body?.["token"] ?? (req.query["token"] as string),
-    };
-    const result = await AuthService.verifyEmail(body);
-    sendResponse.ok(res, "Email verified successfully", result);
-  } catch (err) {
-    next(err);
-  }
-};
+  sendResponse.ok(res, "Login successful", result);
+});
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await AuthService.login(req.body);
+const forgotPassword = catchAsync(async (req, res) => {
+  await AuthService.forgotPassword(req.body);
+  sendResponse.ok(res, "Password reset link sent.");
+});
 
-    if ("redirectToSuccessPage" in result) {
-      sendResponse.ok(res, "Please verify your email address. A new link has been sent.", result);
-      return;
-    }
+const resetPassword = catchAsync(async (req, res) => {
+  await AuthService.resetPassword(req.body);
+  sendResponse.ok(res, "Password reset successfully. Please log in.");
+});
 
-    sendResponse.ok(res, "Login successful", result);
-  } catch (err) {
-    next(err);
-  }
-};
+const changePassword = catchAsync(async (req, res) => {
+  await AuthService.changePassword(req.user!.userId, req.body);
+  sendResponse.ok(res, "Password changed successfully.");
+});
 
-const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await AuthService.forgotPassword(req.body);
-    sendResponse.ok(res, "Password reset link sent.");
-  } catch (err) {
-    next(err);
-  }
-};
+const googleLogin = catchAsync(async (req, res) => {
+  const result = await AuthService.googleLogin(req.body, detectDeviceType(req));
+  sendResponse.ok(res, "Google login successful", result);
+});
 
-const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await AuthService.resetPassword(req.body);
-    sendResponse.ok(res, "Password reset successfully. Please log in.");
-  } catch (err) {
-    next(err);
-  }
-};
-
-const changePassword = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await AuthService.changePassword(req.user!.userId, req.body);
-    sendResponse.ok(res, "Password changed successfully.");
-  } catch (err) {
-    next(err);
-  }
-};
+const signout = catchAsync(async (req, res) => {
+  await AuthService.signout(req.user!.userId, req.user!.sessionId!);
+  sendResponse.ok(res, "Signed out successfully.");
+});
 
 export const AuthController = {
   signup,
   verifyEmail,
   login,
+  googleLogin,
   forgotPassword,
   resetPassword,
   changePassword,
+  signout,
 };

@@ -51,8 +51,12 @@ const getDashboardData = (port: number | string): Record<string, DashboardRow[]>
 
   return {
     network: [
-      { label: "Local", value: chalk.cyan(`http://localhost:${port}`) },
-      { label: "Network", value: chalk.gray(`http://${getLocalIp()}:${port}`) },
+      { label: "Local", value: chalk.greenBright(`http://localhost:${port}`) },
+      { label: "Network", value: chalk.blueBright(`http://${getLocalIp()}:${port}`) },
+      {
+        label: "Queue Dashboard",
+        value: chalk.magentaBright(`http://${getLocalIp()}:${port}/admin/queues`),
+      },
     ],
     system: [
       { label: "Host CPU", value: `${cpu} ${chalk.dim(`(${cores} Cores)`)}` },

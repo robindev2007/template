@@ -1,5 +1,7 @@
 import z from "zod";
 
+export const DeviceType = z.enum(["web", "android", "ios"]);
+
 const SignupSchema = z.object({
   email: z.email(),
   password: z.string().min(8).max(128),
@@ -14,6 +16,7 @@ const VerifyEmailSchema = z.object({
 const LoginSchema = z.object({
   email: z.email(),
   password: z.string().min(1),
+  fcmToken: z.string().optional(),
 });
 
 const ForgotPasswordSchema = z.object({
@@ -31,6 +34,13 @@ const ChangePasswordSchema = z.object({
   newPassword: z.string().min(8).max(128),
 });
 
+const GoogleLoginSchema = z.object({
+  idToken: z.string().min(1),
+  fcmToken: z.string().optional(),
+});
+
+const SignoutSchema = z.object({});
+
 export type AuthSchema = {
   signup: z.infer<typeof SignupSchema>;
   "verify-email": z.infer<typeof VerifyEmailSchema>;
@@ -38,6 +48,8 @@ export type AuthSchema = {
   "forgot-password": z.infer<typeof ForgotPasswordSchema>;
   "reset-password": z.infer<typeof ResetPasswordSchema>;
   "change-password": z.infer<typeof ChangePasswordSchema>;
+  "google-login": z.infer<typeof GoogleLoginSchema>;
+  signout: z.infer<typeof SignoutSchema>;
 };
 
 export const AuthSchema = {
@@ -47,4 +59,6 @@ export const AuthSchema = {
   ForgotPasswordSchema,
   ResetPasswordSchema,
   ChangePasswordSchema,
+  GoogleLoginSchema,
+  SignoutSchema,
 };

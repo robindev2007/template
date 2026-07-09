@@ -1,5 +1,7 @@
-declare namespace Express {
+import type { JwtPayload } from "@/core/utils";
+
+declare module "express" {
   interface Request {
-    user?: import("../core/middleware/identify.middleware").AuthUser;
+    user?: JwtPayload;
   }
 }

@@ -19,6 +19,8 @@ const envSchema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
 
+  GOOGLE_CLIENT_ID: z.string(),
+
   JWT_SECRET: z.string().default("dev-secret-change-in-production"),
   JWT_EXPIRES_IN: z.string().default("7d"),
 

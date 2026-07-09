@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { authLimiter, isAuthenticated, validateBody } from "@/core/middleware";
+import { authLimiter, authorize, validateBody } from "@/core/middleware";
 
 import { AuthController } from "./auth.controller";
 import { AuthSchema } from "./auth.schema";
@@ -37,9 +37,18 @@ route.post(
 route.post(
   "/change-password",
   authLimiter,
-  isAuthenticated,
+  authorize(),
   validateBody(AuthSchema.ChangePasswordSchema),
   AuthController.changePassword,
 );
+
+route.post(
+  "/google",
+  authLimiter,
+  validateBody(AuthSchema.GoogleLoginSchema),
+  AuthController.googleLogin,
+);
+
+route.post("/signout", authorize(), AuthController.signout);
 
 export const authRoute = route;

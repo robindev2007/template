@@ -1,3 +1,6 @@
+import bcrypt from "bcrypt";
+import { createRemoteJWKSet, jwtVerify } from "jose";
+
 import { config } from "@/core/config";
 import { StatusCodes } from "@/core/constants";
 import { prisma } from "@/core/database";
@@ -9,6 +12,21 @@ import { emailQueue } from "@/services/email";
 import type { AuthSchema } from "./auth.schema";
 import { SessionService } from "./session.service";
 import { VerificationTokenService } from "./verification-token.service";
+
+const googleJWKS = createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"));
+
+async function verifyGoogleToken(idToken: string) {
+  if (!config.auth.googleClientId) {
+    throwError(StatusCodes.INTERNAL_SERVER_ERROR, "Google login is not configured.");
+  }
+
+  const { payload } = await jwtVerify(idToken, googleJWKS, {
+    issuer: ["accounts.google.com", "https://accounts.google.com"],
+    audience: config.auth.googleClientId,
+  });
+
+  return payload;
+}
 
 async function sendVerificationEmail(email: string, token: string) {
   const url = `${config.app.frontendUrl}/verify-email?token=${token}&email=${encodeURIComponent(email)}`;
@@ -47,6 +65,10 @@ const signup = async (payload: AuthSchema["signup"]) => {
   });
 
   if (existing) {
+    if (existing.deletedAt) {
+      throwError(StatusCodes.BAD_REQUEST, "This account has been deactivated.");
+    }
+
     if (existing.verified) {
       throwError(StatusCodes.BAD_REQUEST, "Email already exists. Please login instead.");
     }
@@ -62,7 +84,7 @@ const signup = async (payload: AuthSchema["signup"]) => {
     return;
   }
 
-  const password = await Bun.password.hash(payload.password);
+  const password = await bcrypt.hash(payload.password, 12);
 
   const user = await prisma.user.create({
     data: {
@@ -109,7 +131,7 @@ const verifyEmail = async (payload: AuthSchema["verify-email"]) => {
 
   const session = await SessionService.create(user!.id);
 
-  const jwt = JwtUtils.sign({
+  const jwt = await JwtUtils.sign({
     userId: user!.id,
     email: user!.email,
     role: user!.role,
@@ -138,7 +160,7 @@ const verifyEmail = async (payload: AuthSchema["verify-email"]) => {
   };
 };
 
-const login = async (payload: AuthSchema["login"]) => {
+const login = async (payload: AuthSchema["login"], deviceType?: "web" | "android" | "ios") => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
   });
@@ -147,7 +169,18 @@ const login = async (payload: AuthSchema["login"]) => {
     throwError(StatusCodes.UNAUTHORIZED, "Invalid email or password.");
   }
 
-  const valid = await Bun.password.verify(payload.password, user!.password);
+  if (user.deletedAt) {
+    throwError(StatusCodes.UNAUTHORIZED, "This account has been deactivated.");
+  }
+
+  if (!user!.password) {
+    throwError(
+      StatusCodes.UNAUTHORIZED,
+      "This account uses Google login. Please sign in with Google.",
+    );
+  }
+
+  const valid = await bcrypt.compare(payload.password, user!.password);
 
   if (!valid) {
     throwError(StatusCodes.UNAUTHORIZED, "Invalid email or password.");
@@ -165,9 +198,12 @@ const login = async (payload: AuthSchema["login"]) => {
     return { redirectToSuccessPage: true };
   }
 
-  const session = await SessionService.create(user!.id);
+  const session = await SessionService.create(user!.id, {
+    fcmToken: payload.fcmToken,
+    deviceType,
+  });
 
-  const token = JwtUtils.sign({
+  const token = await JwtUtils.sign({
     userId: user!.id,
     email: user!.email,
     role: user!.role,
@@ -223,7 +259,7 @@ const resetPassword = async (payload: AuthSchema["reset-password"]) => {
     throwError(StatusCodes.BAD_REQUEST, "Invalid or expired reset link.");
   }
 
-  const password = await Bun.password.hash(payload.password);
+  const password = await bcrypt.hash(payload.password, 12);
 
   await prisma.user.update({
     where: { id: user!.id },
@@ -244,13 +280,17 @@ const changePassword = async (userId: string, payload: AuthSchema["change-passwo
     throwError(StatusCodes.UNAUTHORIZED, "Invalid credentials.");
   }
 
-  const valid = await Bun.password.verify(payload.currentPassword, user!.password);
+  if (!user!.password) {
+    throwError(StatusCodes.UNAUTHORIZED, "This account uses Google login. Cannot change password.");
+  }
+
+  const valid = await bcrypt.compare(payload.currentPassword, user!.password);
 
   if (!valid) {
     throwError(StatusCodes.UNAUTHORIZED, "Current password is incorrect.");
   }
 
-  const password = await Bun.password.hash(payload.newPassword);
+  const password = await bcrypt.hash(payload.newPassword, 12);
 
   await prisma.user.update({
     where: { id: userId },
@@ -262,11 +302,87 @@ const changePassword = async (userId: string, payload: AuthSchema["change-passwo
   logger.info("Password changed successfully", { userId });
 };
 
+const googleLogin = async (
+  payload: AuthSchema["google-login"],
+  deviceType?: "web" | "android" | "ios",
+) => {
+  const googlePayload = await verifyGoogleToken(payload.idToken);
+  const email = googlePayload["email"] as string | undefined;
+  const name = googlePayload["name"] as string | undefined;
+
+  if (!email) {
+    throwError(StatusCodes.BAD_REQUEST, "Google account has no email.");
+  }
+
+  let user = await prisma.user.findUnique({ where: { email } });
+
+  if (user) {
+    if (user.deletedAt) {
+      throwError(StatusCodes.BAD_REQUEST, "This account has been deactivated.");
+    }
+
+    if (!user.provider) {
+      throwError(
+        StatusCodes.CONFLICT,
+        "This email is already registered with email and password. Please login using your email and password.",
+      );
+    }
+  } else {
+    user = await prisma.user.create({
+      data: {
+        email,
+        name: name ?? null,
+        provider: "GOOGLE",
+        verified: true,
+      },
+    });
+
+    logger.info("New user created via Google", { userId: user.id });
+  }
+
+  const session = await SessionService.create(user.id, {
+    fcmToken: payload.fcmToken,
+    deviceType,
+  });
+
+  const token = await JwtUtils.sign({
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    sessionId: session.id,
+  });
+
+  return {
+    token,
+    session: { id: session.id, token: session.token, expiresAt: session.expiresAt },
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    },
+  };
+};
+
+const signout = async (userId: string, sessionId: string) => {
+  const session = await prisma.session.findUnique({ where: { id: sessionId } });
+
+  if (!session || session.userId !== userId) {
+    throwError(StatusCodes.NOT_FOUND, "Session not found.");
+  }
+
+  await SessionService.deleteById(sessionId);
+
+  logger.info("User signed out", { userId, sessionId });
+};
+
 export const AuthService = {
   signup,
   verifyEmail,
   login,
+  googleLogin,
   forgotPassword,
   resetPassword,
   changePassword,
+  signout,
 };

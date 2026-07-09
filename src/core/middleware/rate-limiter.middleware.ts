@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import { rateLimit } from "express-rate-limit";
+import { ipKeyGenerator, rateLimit } from "express-rate-limit";
 
 import { config } from "@/core/config";
 
@@ -22,7 +22,9 @@ export const authLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req: Request) => {
     const email = req.body?.email as string | undefined;
-    return email ? `auth:${email}` : (req.ip ?? "unknown");
+
+    // Rate limit by email when provided, otherwise by IP (IPv6-safe)
+    return email ? `auth:${email.toLowerCase()}` : ipKeyGenerator(req.ip ?? "");
   },
   message: {
     success: false,

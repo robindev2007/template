@@ -17,6 +17,7 @@ export const config = {
     smtpPass: env.SMTP_PASS ?? "",
   },
   auth: {
+    googleClientId: env.GOOGLE_CLIENT_ID,
     jwtSecret: env.JWT_SECRET,
     jwtExpiresIn: env.JWT_EXPIRES_IN,
     tokenExpiryMinutes: env.TOKEN_EXPIRY_MINUTES,

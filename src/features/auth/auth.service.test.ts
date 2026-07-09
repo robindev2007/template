@@ -31,12 +31,17 @@ jest.mock("@/core/database", () => ({
   },
 }));
 
+jest.mock("bcrypt", () => ({
+  hash: jest.fn().mockResolvedValue("hashed-password"),
+  compare: jest.fn(),
+}));
+
 jest.mock("@/core/logger", () => ({
   logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
 }));
 
 jest.mock("@/core/utils/jwt", () => ({
-  JwtUtils: { sign: jest.fn().mockReturnValue("jwt-token-string"), verify: jest.fn() },
+  JwtUtils: { sign: jest.fn().mockResolvedValue("jwt-token-string"), verify: jest.fn() },
 }));
 
 jest.mock("@/services/email", () => ({
@@ -58,6 +63,7 @@ jest.mock("./verification-token.service", () => ({
   },
 }));
 
+const getBcrypt = () => jest.requireMock("bcrypt");
 const getPrisma = () => jest.requireMock("@/core/database").prisma;
 const getEmailQueue = () => jest.requireMock("@/services/email").emailQueue;
 const getJwtUtils = () => jest.requireMock("@/core/utils/jwt").JwtUtils;
@@ -67,10 +73,6 @@ const getVerificationTokenService = () =>
 
 beforeEach(() => {
   jest.clearAllMocks();
-  (Bun as any).password = {
-    hash: jest.fn().mockResolvedValue("hashed-password"),
-    verify: jest.fn(),
-  };
 });
 
 describe("AuthService.signup", () => {
@@ -83,7 +85,7 @@ describe("AuthService.signup", () => {
     await AuthService.signup(payload);
 
     expect(getPrisma().user.create).toHaveBeenCalledWith({
-      data: { email: payload.email, password: "hashed-password", name: "Test" },
+      data: { email: payload.email, password: expect.stringContaining(":"), name: "Test" },
     });
     expect(getVerificationTokenService().create).toHaveBeenCalledWith(
       mockUser.id,
@@ -187,10 +189,9 @@ describe("AuthService.login", () => {
 
   it("returns token + session + user for valid verified credentials", async () => {
     getPrisma().user.findUnique.mockResolvedValue(mockVerifiedUser);
-    (Bun as any).password.verify.mockResolvedValue(true);
     getSessionService().create.mockResolvedValue(mockSession);
 
-    const result = await AuthService.login(payload);
+    const result = await AuthService.login(payload, "web");
 
     expect(getSessionService().create).toHaveBeenCalledWith(mockVerifiedUser.id);
     expect(getJwtUtils().sign).toHaveBeenCalledWith({
@@ -219,16 +220,16 @@ describe("AuthService.login", () => {
 
   it("throws error for wrong password", async () => {
     getPrisma().user.findUnique.mockResolvedValue(mockVerifiedUser);
-    (Bun as any).password.verify.mockResolvedValue(false);
+    getBcrypt().compare.mockResolvedValue(false);
 
     await expect(AuthService.login(payload)).rejects.toThrow(AppError);
   });
 
   it("sends new verification link for unverified user", async () => {
     getPrisma().user.findUnique.mockResolvedValue(mockUser);
-    (Bun as any).password.verify.mockResolvedValue(true);
+    getBcrypt().compare.mockResolvedValue(true);
 
-    const result = await AuthService.login(payload);
+    const result = await AuthService.login(payload, "web");
 
     expect(getVerificationTokenService().create).toHaveBeenCalledWith(
       mockUser.id,

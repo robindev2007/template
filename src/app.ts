@@ -3,10 +3,9 @@ import express from "express";
 
 import { globalErrorHandler } from "@/core/middleware/error.middleware";
 import { requestLogger } from "@/core/middleware/logger.middleware";
+import { sendResponse } from "@/core/utils";
+import { mountBullBoard } from "@/features/bullboard";
 import { router as apiRouter } from "@/routes";
-
-import { sendResponse } from "./core/utils";
-import { mountBullBoard } from "./features/bullboard";
 
 const app = express();
 
@@ -21,14 +20,17 @@ app.use(requestLogger);
 
 mountBullBoard(app);
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   sendResponse.ok(res, "Welcome to the API");
 });
 
 app.use("/api/v1", apiRouter);
 
 app.use((_req, res) => {
-  res.status(404).json({ success: false, statusCode: 404, message: "Route not found" });
+  sendResponse.notFound(res, "Route not found", {
+    route: _req.originalUrl,
+    timeStamp: new Date().toISOString(),
+  });
 });
 
 app.use(globalErrorHandler);

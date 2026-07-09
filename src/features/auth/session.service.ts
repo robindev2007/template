@@ -9,7 +9,10 @@ function hashToken(raw: string): string {
 }
 
 export const SessionService = {
-  async create(userId: string, opts?: { userAgent?: string; ipAddress?: string }) {
+  async create(
+    userId: string,
+    opts?: { userAgent?: string; ipAddress?: string; fcmToken?: string; deviceType?: string },
+  ) {
     const raw = randomBytes(SESSION_TOKEN_BYTES).toString("hex");
     const refreshRaw = randomBytes(SESSION_TOKEN_BYTES).toString("hex");
 
@@ -20,6 +23,8 @@ export const SessionService = {
         refreshToken: hashToken(refreshRaw),
         userAgent: opts?.userAgent,
         ipAddress: opts?.ipAddress,
+        fcmToken: opts?.fcmToken,
+        deviceType: opts?.deviceType,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });
@@ -43,6 +48,10 @@ export const SessionService = {
     });
 
     return session;
+  },
+
+  async deleteById(sessionId: string) {
+    await prisma.session.delete({ where: { id: sessionId } });
   },
 
   async delete(rawToken: string) {

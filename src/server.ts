@@ -9,8 +9,17 @@ const PORT = config.app.port;
 if (!g.__server_listening__) {
   g.__server_listening__ = true;
 
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     logStartup(PORT);
     logger.info(`Ready for connections.`);
+  });
+
+  server.on("error", (err: NodeJS.ErrnoException) => {
+    if (err.code === "EADDRINUSE") {
+      logger.error(`Port ${PORT} is already in use.`);
+      logger.error(`Please free the port or set a different PORT in your .env file.`);
+      process.exit(1);
+    }
+    throw err;
   });
 }

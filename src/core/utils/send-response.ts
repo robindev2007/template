@@ -43,8 +43,8 @@ const unauthorized = (res: Response, message = "Unauthorized") =>
 const forbidden = (res: Response, message = "Forbidden") =>
   send(res, StatusCodes.FORBIDDEN, message);
 
-const notFound = (res: Response, message = "Resource not found") =>
-  send(res, StatusCodes.NOT_FOUND, message);
+const notFound = (res: Response, message = "Resource not found", data?: unknown) =>
+  send(res, StatusCodes.NOT_FOUND, message, data);
 
 const validationError = <T>(res: Response, errors?: T, message = "Validation failed") =>
   send(res, StatusCodes.UNPROCESSABLE_ENTITY, message, errors);

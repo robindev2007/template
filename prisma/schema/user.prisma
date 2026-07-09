@@ -7,13 +7,18 @@ enum TokenType {
 model User {
     id        String   @id @default(cuid())
     email     String   @unique
-    password  String
+    password  String?
     name      String?
-    role      Role     @default(user)
+    role      Role     @default(USER)
+    provider  AuthProvider?
     verified  Boolean  @default(false)
     emailNew  String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    deletedAt       DateTime?
+    watchPreference String?
+    favoriteGenres  String[]
+    onboardingCompleted Boolean @default(false)
 
     verificationTokens VerificationToken[]
     sessions           Session[]
@@ -41,10 +46,21 @@ model Session {
     refreshToken String?
     userAgent    String?
     ipAddress    String?
+    fcmToken     String?
+    deviceType   String?
     expiresAt    DateTime
     lastUsedAt   DateTime @default(now())
     createdAt    DateTime @default(now())
 
     @@index([userId])
     @@index([token])
+}
+
+enum AuthProvider {
+    GOOGLE
+}
+
+enum Role {
+    ADMIN
+    USER
 }

@@ -6,9 +6,3 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
-enum Role {
-  user
-  moderator
-  admin
-}
