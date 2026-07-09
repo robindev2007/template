@@ -15,6 +15,9 @@ const config: Config = {
     ],
   },
 
+  // Allow ESM packages inside node_modules to be transformed
+  transformIgnorePatterns: ["node_modules/(?!jose)"],
+
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
     "^@/prisma/(.*)$": "<rootDir>/prisma/generated/prisma/$1",
