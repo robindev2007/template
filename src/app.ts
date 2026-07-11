@@ -1,6 +1,8 @@
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
 
+import { config } from "@/core/config";
 import { globalErrorHandler } from "@/core/middleware/error.middleware";
 import { requestLogger } from "@/core/middleware/logger.middleware";
 import { sendResponse } from "@/core/utils";
@@ -11,6 +13,12 @@ import { MoviesService } from "./features/tmdb-movies/tmdb-movies.service";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: ["http://127.0.0.1:5500", config.cors.origin],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
