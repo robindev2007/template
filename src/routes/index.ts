@@ -13,11 +13,11 @@ const router = Router();
 
 router.use("/auth", authRoute);
 router.use("/users", userRoute);
-router.use("/", onboardingRoute);
+router.use("/system", onboardingRoute);
 router.use("/tmdb-movies", moviesRoute);
-router.use("/", ratingsRoute);
-router.use("/", favoritesRoute);
-router.use("/", watchlistRoute);
+router.use("/ratings", ratingsRoute);
+router.use("/favorites", favoritesRoute);
+router.use("/watchlist", watchlistRoute);
 router.use("/recommendations", recommendationsRoute);
 
 export { router };

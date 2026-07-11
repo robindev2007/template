@@ -8,17 +8,17 @@ import { RatingSchema } from "./ratings.schema";
 const router = Router();
 
 router.post(
-  "/ratings",
+  "/",
   authorize(),
   validateRequest(RatingSchema.RateMovieSchema),
   RatingsController.upsert,
 );
 router.delete(
-  "/ratings/:movieId",
+  "/:movieId",
   authorize(),
   validateRequest(RatingSchema.MovieIdParamsSchema),
   RatingsController.remove,
 );
-router.get("/ratings", authorize(), RatingsController.getMyRatings);
+router.get("/", authorize(), RatingsController.getMyRatings);
 
 export { router as ratingsRoute };

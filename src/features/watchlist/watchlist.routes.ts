@@ -8,11 +8,11 @@ import { WatchlistSchema } from "./watchlist.schema";
 const router = Router();
 
 router.post(
-  "/watchlist",
+  "/",
   authorize(),
   validateRequest(WatchlistSchema.ToggleWatchlistSchema),
   WatchlistController.toggle,
 );
-router.get("/watchlist", authorize(), WatchlistController.getMyWatchlist);
+router.get("/", authorize(), WatchlistController.getMyWatchlist);
 
 export { router as watchlistRoute };
