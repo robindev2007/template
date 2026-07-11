@@ -109,4 +109,8 @@ export interface DiscoverFilters {
   "with_runtime.lte"?: number;
   include_adult?: boolean;
   include_video?: boolean;
+  with_cast?: string;
+  with_crew?: string;
+  with_watch_providers?: string;
+  watch_region?: string;
 }

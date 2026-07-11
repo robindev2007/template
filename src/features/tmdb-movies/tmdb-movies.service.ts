@@ -37,11 +37,12 @@ async function fetchFromTMDB<T>(
   return res.json() as Promise<T>;
 }
 
-const discover = async (filters: DiscoverFilters) => {
+const discover = async (filters: DiscoverFilters, mediaType?: "movie" | "tv") => {
   const params: Record<string, string | number | boolean | undefined> = { ...filters };
   if (params["include_adult"] === undefined) params["include_adult"] = false;
 
-  return fetchFromTMDB<TMDBPaginatedResponse<TMDBMovie>>("/discover/movie", params);
+  const endpoint = mediaType === "tv" ? "/discover/tv" : "/discover/movie";
+  return fetchFromTMDB<TMDBPaginatedResponse<TMDBMovie>>(endpoint, params);
 };
 
 const getById = async (movieId: number) => {
@@ -64,9 +65,29 @@ const getMovieGenres = async () => {
   return fetchFromTMDB<TMDBGenreResponse>("/genre/movie/list");
 };
 
+interface TMDBPersonSearchResult {
+  id: number;
+  name: string;
+  known_for_department: string;
+  profile_path: string | null;
+  popularity: number;
+}
+
+interface TMDBPersonSearchResponse {
+  page: number;
+  results: TMDBPersonSearchResult[];
+  total_pages: number;
+  total_results: number;
+}
+
+const searchPerson = async (query: string) => {
+  return fetchFromTMDB<TMDBPersonSearchResponse>("/search/person", { query });
+};
+
 export const MoviesService = {
   discover,
   getById,
   getAvailability,
   getMovieGenres,
+  searchPerson,
 };

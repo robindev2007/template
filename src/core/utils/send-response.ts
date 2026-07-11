@@ -18,8 +18,8 @@ export const send = <T>(
   meta?: T_Meta,
 ) => {
   const body: ApiResponse<T> = { success: statusCode < 400, message };
-  if (data !== undefined) body.data = data;
   if (meta !== undefined) body.meta = meta;
+  if (data !== undefined) body.data = data;
   return res.status(statusCode).json(body);
 };
 

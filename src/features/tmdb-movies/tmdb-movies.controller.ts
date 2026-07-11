@@ -22,8 +22,15 @@ const getAvailability = catchAsync(async (req, res) => {
   sendResponse.ok(res, "Availability retrieved", result);
 });
 
+const searchPerson = catchAsync(async (req, res) => {
+  const query = req.query["q"] as string;
+  const result = await MoviesService.searchPerson(query);
+  sendResponse.ok(res, "Person search results", result);
+});
+
 export const MoviesController = {
   discover,
   getById,
   getAvailability,
+  searchPerson,
 };

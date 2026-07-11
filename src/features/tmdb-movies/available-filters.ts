@@ -70,7 +70,12 @@ export const AVAILABLE_FILTERS: FilterGroup[] = [
         value: "documentary",
         tmdbParams: { with_genres: "99" },
       },
-      { label: "Anime", emoji: "🌸", value: "anime", tmdbParams: { with_original_language: "ja" } },
+      {
+        label: "Anime",
+        emoji: "🌸",
+        value: "anime",
+        tmdbParams: { with_original_language: "ja", with_genres: "16" },
+      },
     ],
   },
   {

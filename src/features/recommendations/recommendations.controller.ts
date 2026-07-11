@@ -5,8 +5,14 @@ import { RecommendationsService } from "./recommendations.service";
 
 const fromFilters = catchAsync(async (req, res) => {
   const { filters } = req.body;
-  const result = await RecommendationsService.fromFilters(req.user!.userId, filters);
-  sendResponse.ok(res, "Filter recommendations retrieved", result);
+  const page = Number(req.query["page"]) || 1;
+  const result = await RecommendationsService.fromFilters(req.user!.userId, filters, page);
+  sendResponse.paginated(
+    res,
+    result.results,
+    { page: result.page, limit: 20, total: result.total_results },
+    "Filter recommendations retrieved",
+  );
 });
 
 const personalized = catchAsync(async (req, res) => {

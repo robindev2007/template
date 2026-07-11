@@ -37,9 +37,16 @@ const MovieParamsSchema = z.object({
   }),
 });
 
+const PersonSearchSchema = z.object({
+  query: z.object({
+    q: z.string().min(1, "Search query is required"),
+  }),
+});
+
 export const TMDBMovieSchema = {
   DiscoverQuerySchema,
   MovieParamsSchema,
+  PersonSearchSchema,
 };
 
 export type TMDBMovieSchemaType = {

@@ -28,4 +28,11 @@ router.get(
   MoviesController.getAvailability,
 );
 
+router.get(
+  "/search/person",
+  authorize(),
+  validateRequest(TMDBMovieSchema.PersonSearchSchema),
+  MoviesController.searchPerson,
+);
+
 export { router as moviesRoute };
