@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
-import { join, extname, dirname } from "node:path";
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { dirname, extname, join } from "node:path";
 
 const DIST_DIR = "dist";
 
