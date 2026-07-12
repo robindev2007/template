@@ -10,6 +10,7 @@
     "build:server": "bun build src/server.ts --outdir dist --target bun",
     "build:worker": "bun build src/worker.ts --outdir dist --target bun",
     "build": "bun run build:server && bun run build:worker",
+    "build:vercel": "./node_modules/.bin/tsc --project tsconfig.vercel.json && ./node_modules/.bin/tsc-alias -p tsconfig.vercel.json && node scripts/fix-esm-extensions.mjs",
     "start:server": "bun dist/server.js",
     "start:worker": "bun dist/worker.js",
     "start": "bun run scripts/start-runner.ts",
@@ -43,6 +44,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/nodemailer": "^8.0.1",
     "@types/pg": "^8.20.0",
+    "@types/react": "^19.2.17",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
@@ -52,6 +54,8 @@
     "prettier": "^3.9.4",
     "prisma": "^7.8.0",
     "ts-jest": "^29.4.11",
+    "tsc-alias": "^1.9.0",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.62.1"
   },
   "peerDependencies": {
@@ -60,6 +64,7 @@
   "dependencies": {
     "@bull-board/api": "^8.1.0",
     "@bull-board/express": "^8.1.0",
+    "@bull-board/ui": "8.1.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@types/express": "^5.0.6",

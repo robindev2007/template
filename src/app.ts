@@ -28,7 +28,11 @@ app.use(express.static("public"));
 
 app.use(requestLogger);
 
-mountBullBoard(app);
+try {
+  mountBullBoard(app);
+} catch {
+  // bull-board may fail in serverless environments (e.g. Vercel)
+}
 
 app.get("/", async (req, res) => {
   const movies = await MoviesService.discover({});
@@ -48,3 +52,5 @@ app.use((_req, res) => {
 app.use(globalErrorHandler);
 
 export { app };
+
+export default app;
