@@ -42,6 +42,9 @@ const envSchema = z.object({
 
   TOKEN_EXPIRY_MINUTES: z.coerce.number().default(15),
   SESSION_EXPIRY_DAYS: z.coerce.number().default(30),
+
+  ADMIN_EMAIL: z.email(),
+  ADMIN_PASSWORD: z.string().min(8),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

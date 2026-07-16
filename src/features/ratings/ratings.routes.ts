@@ -13,12 +13,14 @@ router.post(
   validateRequest(RatingSchema.RateMovieSchema),
   RatingsController.upsert,
 );
+
 router.delete(
   "/:movieId",
   authorize(),
   validateRequest(RatingSchema.MovieIdParamsSchema),
   RatingsController.remove,
 );
+
 router.get("/", authorize(), RatingsController.getMyRatings);
 
 export { router as ratingsRoute };

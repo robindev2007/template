@@ -1,0 +1,341 @@
+{
+  "info": {
+    "name": "Curated Pages API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Page (Draft)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"Best Action Movies of 2026\",\n    \"description\": \"A curated list of the top action movies released in 2026.\",\n    \"bannerImage\": \"https://example.com/banner.jpg\",\n    \"seoTitle\": \"Best Action Movies 2026 | My Site\",\n    \"seoDescription\": \"Discover the top action movies of 2026 curated by our editors.\",\n    \"introContent\": \"<p>Welcome to our curated collection of the best action movies of 2026.</p>\",\n    \"faqContent\": \"[{\\\"question\\\":\\\"What is this list?\\\",\\\"answer\\\":\\\"A curated selection of top action movies.\\\"}]\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages"]
+        }
+      }
+    },
+    {
+      "name": "Create Page (Published)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"Best Horror Movies of 2026\",\n    \"description\": \"Top horror movies released in 2026.\",\n    \"bannerImage\": \"https://example.com/horror-banner.jpg\",\n    \"seoTitle\": \"Best Horror Movies 2026 | My Site\",\n    \"seoDescription\": \"Discover the scariest horror movies of 2026.\",\n    \"status\": \"PUBLISHED\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages"]
+        }
+      }
+    },
+    {
+      "name": "List Pages",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages?page=1&limit=20",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "20" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Pages by Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages?status=DRAFT&page=1&limit=20",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages"],
+          "query": [
+            { "key": "status", "value": "DRAFT" },
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "20" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Search Pages by Title",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages?search=action&page=1&limit=20",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages"],
+          "query": [
+            { "key": "search", "value": "action" },
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "20" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Page by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here?itemPage=1&itemLimit=20",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here"],
+          "query": [
+            { "key": "itemPage", "value": "1" },
+            { "key": "itemLimit", "value": "20" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Page Items (All Pages)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here?itemPage=1&itemLimit=100",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here"],
+          "query": [
+            { "key": "itemPage", "value": "1" },
+            { "key": "itemLimit", "value": "100" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Page",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"Updated Title\",\n    \"description\": \"Updated description\",\n    \"bannerImage\": \"https://example.com/new-banner.jpg\",\n    \"seoTitle\": \"Best Action Movies | My Site\",\n    \"seoDescription\": \"Discover the best action movies of 2026\",\n    \"introContent\": \"<p>Welcome to our curated collection...</p>\",\n    \"faqContent\": \"[{\\\"question\\\":\\\"What is this?\\\",\\\"answer\\\":\\\"A curated list of movies.\\\"}]\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here"]
+        }
+      }
+    },
+    {
+      "name": "Delete Page",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here"]
+        }
+      }
+    },
+    {
+      "name": "Add Items to Page",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"movieIds\": [550, 680, 155]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here/items",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here", "items"]
+        }
+      }
+    },
+    {
+      "name": "Remove Item from Page",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here/items/item-id-here",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here", "items", "item-id-here"]
+        }
+      }
+    },
+    {
+      "name": "Reorder Items",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"itemIds\": [\"item-id-3\", \"item-id-1\", \"item-id-2\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here/items/reorder",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here", "items", "reorder"]
+        }
+      }
+    },
+    {
+      "name": "Publish Page",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here/publish",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here", "publish"]
+        }
+      }
+    },
+    {
+      "name": "Schedule Page",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{ADMIN_ACCESS_TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"publishAt\": \"2026-08-01T10:00:00Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_API}}/admin/pages/page-id-here/publish",
+          "host": ["{{BASE_API}}"],
+          "path": ["admin", "pages", "page-id-here", "publish"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_API",
+      "value": ""
+    },
+    {
+      "key": "ADMIN_ACCESS_TOKEN",
+      "value": ""
+    }
+  ]
+}

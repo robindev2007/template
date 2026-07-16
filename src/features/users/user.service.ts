@@ -8,7 +8,7 @@ import { GenreItem, profileSelect, ProviderItem, type UserProfile } from "./user
 import type { UserSchema } from "./user.schema";
 
 const getProfileById = async (userId: string): Promise<UserProfile> => {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: { id: userId },
     select: profileSelect,
   });

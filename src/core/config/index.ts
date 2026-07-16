@@ -48,4 +48,8 @@ export const config = {
     authWindowMs: env.RATE_LIMIT_AUTH_WINDOW_MS,
     authMax: env.RATE_LIMIT_AUTH_MAX,
   },
+  admin: {
+    email: env.ADMIN_EMAIL,
+    password: env.ADMIN_PASSWORD,
+  },
 };

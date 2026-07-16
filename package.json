@@ -19,7 +19,11 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "prepare": "husky",
-    "email": "email dev --dir ./src/services/email/templates --port 3001"
+    "email": "email dev --dir ./src/services/email/templates --port 3001",
+    "db:seed": "bun --env-file=.env prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "bun --env-file=.env prisma/seed.ts"
   },
   "lint-staged": {
     "*.{ts,js}": [

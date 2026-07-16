@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { authRoute } from "@/features/auth/auth.routes";
+import { curatedPagesRoute } from "@/features/curated-pages/curated-pages.routes";
 import { favoritesRoute } from "@/features/favorites/favorites.routes";
 import { onboardingRoute } from "@/features/onboarding/onboarding.routes";
 import { ratingsRoute } from "@/features/ratings/ratings.routes";
@@ -19,5 +20,6 @@ router.use("/ratings", ratingsRoute);
 router.use("/favorites", favoritesRoute);
 router.use("/watchlist", watchlistRoute);
 router.use("/recommendations", recommendationsRoute);
+router.use("/admin/pages", curatedPagesRoute);
 
 export { router };

@@ -29,13 +29,13 @@ app.use(requestLogger);
 mountQueueDashboard(app);
 
 app.get("/", async (req, res) => {
-  sendResponse.ok(res, "Welcome to the API");
+  sendResponse.forbidden(res, "Welcome to the API");
 });
 
 app.use("/api/v1", apiRouter);
 
-app.use((_req, res) => {
-  sendResponse.notFound(res, "Route not found", {
+app.use(async (_req, res) => {
+  sendResponse.ok(res, "Route not found", {
     route: _req.originalUrl,
     timeStamp: new Date().toISOString(),
   });

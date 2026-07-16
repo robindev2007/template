@@ -9,10 +9,11 @@ const router = Router();
 
 router.post(
   "/",
-  authorize(),
+  authorize("ADMIN", "USER"),
   validateRequest(FavoriteSchema.ToggleFavoriteSchema),
   FavoritesController.toggle,
 );
+
 router.get("/", authorize(), FavoritesController.getMyFavorites);
 
 export { router as favoritesRoute };

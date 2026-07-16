@@ -1,0 +1,43 @@
+enum CuratedPageStatus {
+    DRAFT
+    PUBLISHED
+    SCHEDULED
+}
+
+model CuratedPage {
+    id              String               @id @default(cuid())
+    title           String               @unique
+    slug            String               @unique
+    description     String?
+    bannerImage     String?
+
+    seoTitle        String?
+    seoDescription  String?
+
+    introContent    String?
+    faqContent      String?
+    schemaMarkup    String?
+
+    status          CuratedPageStatus    @default(DRAFT)
+    publishAt       DateTime?
+    publishedAt     DateTime?
+    createdAt       DateTime             @default(now())
+    updatedAt       DateTime             @updatedAt
+
+    items           CuratedPageItem[]
+
+    @@index([status])
+    @@index([slug])
+    @@index([status, publishAt])
+}
+
+model CuratedPageItem {
+    id            String       @id @default(cuid())
+    pageId        String
+    page          CuratedPage  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+    movieId       Int
+    order         Int
+    createdAt     DateTime     @default(now())
+
+    @@index([pageId, order])
+}
