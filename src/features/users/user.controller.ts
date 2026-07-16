@@ -13,4 +13,9 @@ const deleteAccount = catchAsync(async (req, res) => {
   sendResponse.ok(res, "Account deleted successfully.");
 });
 
-export const UserController = { getProfile, deleteAccount };
+const completeOnboarding = catchAsync(async (req, res) => {
+  await UserService.completeOnboarding(req.user!.userId, req.body);
+  sendResponse.ok(res, "Onboarding completed.");
+});
+
+export const UserController = { getProfile, deleteAccount, completeOnboarding };

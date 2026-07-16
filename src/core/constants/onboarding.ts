@@ -227,3 +227,15 @@ export const WATCH_PROVIDERS: WatchProvider[] = [
     logo: "https://image.tmdb.org/t/p/original/6KEQzITx2RrCAQt5Nw9WrL1OI8z.jpg",
   },
 ];
+
+export const GENRES_BY_VALUE: Record<string, Genre> = Object.fromEntries(
+  GENRES.map((g) => [g.value, g]),
+);
+
+export const PROVIDERS_BY_NAME: Record<string, WatchProvider> = Object.fromEntries(
+  WATCH_PROVIDERS.map((p) => [p.name, p]),
+);
+
+export const PROVIDERS_BY_ID: Record<number, WatchProvider> = Object.fromEntries(
+  WATCH_PROVIDERS.map((p) => [p.providerId, p]),
+);

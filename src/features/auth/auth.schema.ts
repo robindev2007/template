@@ -29,6 +29,10 @@ const ResetPasswordSchema = z.object({
   password: z.string().min(8).max(128),
 });
 
+const ResendVerificationSchema = z.object({
+  email: z.email(),
+});
+
 const ChangePasswordSchema = z.object({
   currentPassword: z.string().min(1),
   newPassword: z.string().min(8).max(128),
@@ -49,6 +53,7 @@ export type AuthSchema = {
   "reset-password": z.infer<typeof ResetPasswordSchema>;
   "change-password": z.infer<typeof ChangePasswordSchema>;
   "google-login": z.infer<typeof GoogleLoginSchema>;
+  "resend-verification": z.infer<typeof ResendVerificationSchema>;
   signout: z.infer<typeof SignoutSchema>;
 };
 
@@ -60,5 +65,6 @@ export const AuthSchema = {
   ResetPasswordSchema,
   ChangePasswordSchema,
   GoogleLoginSchema,
+  ResendVerificationSchema,
   SignoutSchema,
 };

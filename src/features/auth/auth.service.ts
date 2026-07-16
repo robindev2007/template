@@ -41,6 +41,8 @@ async function sendVerificationEmail(email: string, token: string) {
       expiryMinutes: config.auth.tokenExpiryMinutes,
     },
   });
+
+  return url;
 }
 
 async function sendResetPasswordEmail(email: string, userName: string, token: string) {
@@ -79,7 +81,11 @@ const signup = async (payload: AuthSchema["signup"]) => {
       config.auth.tokenExpiryMinutes,
     );
 
-    await sendVerificationEmail(existing.email, token);
+    const url = await sendVerificationEmail(existing.email, token);
+
+    if (config.app.env === "development") {
+      return { verificationUrl: url };
+    }
 
     return;
   }
@@ -102,7 +108,11 @@ const signup = async (payload: AuthSchema["signup"]) => {
     config.auth.tokenExpiryMinutes,
   );
 
-  await sendVerificationEmail(user.email, token);
+  const url = await sendVerificationEmail(user.email, token);
+
+  if (config.app.env === "development") {
+    return { verificationUrl: url };
+  }
 };
 
 const verifyEmail = async (payload: AuthSchema["verify-email"]) => {
@@ -195,7 +205,7 @@ const login = async (payload: AuthSchema["login"], deviceType?: "web" | "android
 
     await sendVerificationEmail(user!.email, token);
 
-    return { redirectToSuccessPage: true };
+    return { redirectToVerifyPage: true };
   }
 
   const session = await SessionService.create(user!.id, {
@@ -242,6 +252,32 @@ const forgotPassword = async (payload: AuthSchema["forgot-password"]) => {
   );
 
   await sendResetPasswordEmail(user.email, user.name ?? "User", token);
+};
+
+const resendVerification = async (payload: AuthSchema["resend-verification"]) => {
+  const user = await prisma.user.findUnique({
+    where: { email: payload.email },
+  });
+
+  if (!user) {
+    throwError(StatusCodes.NOT_FOUND, "Email not found.");
+  }
+
+  if (user.verified) {
+    throwError(StatusCodes.BAD_REQUEST, "Email already verified.");
+  }
+
+  const { token } = await VerificationTokenService.create(
+    user.id,
+    "magic_link",
+    config.auth.tokenExpiryMinutes,
+  );
+
+  const url = await sendVerificationEmail(user.email, token);
+
+  if (config.app.env === "development") {
+    return { verificationUrl: url };
+  }
 };
 
 const resetPassword = async (payload: AuthSchema["reset-password"]) => {
@@ -385,4 +421,5 @@ export const AuthService = {
   resetPassword,
   changePassword,
   signout,
+  resendVerification,
 };

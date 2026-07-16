@@ -21,6 +21,13 @@ route.get("/verify-email", authLimiter, AuthController.verifyEmail);
 route.post("/login", authLimiter, validateBody(AuthSchema.LoginSchema), AuthController.login);
 
 route.post(
+  "/resend-verification",
+  authLimiter,
+  validateBody(AuthSchema.ResendVerificationSchema),
+  AuthController.resendVerification,
+);
+
+route.post(
   "/forgot-password",
   authLimiter,
   validateBody(AuthSchema.ForgotPasswordSchema),

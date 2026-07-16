@@ -15,8 +15,8 @@ function detectDeviceType(req: Request): "web" | "android" | "ios" | undefined {
 }
 
 const signup = catchAsync(async (req, res) => {
-  await AuthService.signup(req.body);
-  sendResponse.created(res, "Check your email for the verification link.");
+  const data = await AuthService.signup(req.body);
+  sendResponse.created(res, "Check your email for the verification link.", data);
 });
 
 const verifyEmail = catchAsync(async (req, res) => {
@@ -31,12 +31,17 @@ const verifyEmail = catchAsync(async (req, res) => {
 const login = catchAsync(async (req, res) => {
   const result = await AuthService.login(req.body, detectDeviceType(req));
 
-  if ("redirectToSuccessPage" in result) {
+  if ("redirectToVerifyPage" in result) {
     sendResponse.ok(res, "Please verify your email address. A new link has been sent.", result);
     return;
   }
 
   sendResponse.ok(res, "Login successful", result);
+});
+
+const resendVerification = catchAsync(async (req, res) => {
+  const data = await AuthService.resendVerification(req.body);
+  sendResponse.ok(res, "Verification link sent.", data);
 });
 
 const forgotPassword = catchAsync(async (req, res) => {
@@ -69,6 +74,7 @@ export const AuthController = {
   verifyEmail,
   login,
   googleLogin,
+  resendVerification,
   forgotPassword,
   resetPassword,
   changePassword,

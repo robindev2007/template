@@ -55,7 +55,7 @@ const getDashboardData = (port: number | string): Record<string, DashboardRow[]>
       { label: "Network", value: chalk.blueBright(`http://${getLocalIp()}:${port}`) },
       {
         label: "Queue Dashboard",
-        value: chalk.magentaBright(`http://${getLocalIp()}:${port}/admin/queues`),
+        value: chalk.magentaBright(`http://${getLocalIp()}:${port}/jobs`),
       },
     ],
     system: [
