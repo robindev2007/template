@@ -6,10 +6,8 @@ import { config } from "@/core/config";
 import { globalErrorHandler } from "@/core/middleware/error.middleware";
 import { requestLogger } from "@/core/middleware/logger.middleware";
 import { sendResponse } from "@/core/utils";
-import { mountBullBoard } from "@/features/bullboard";
+import { mountQueueDashboard } from "@/features/queue-dashboard";
 import { router as apiRouter } from "@/routes";
-
-import { MoviesService } from "./features/tmdb-movies/tmdb-movies.service";
 
 const app = express();
 
@@ -28,16 +26,10 @@ app.use(express.static("public"));
 
 app.use(requestLogger);
 
-try {
-  mountBullBoard(app);
-} catch {
-  // bull-board may fail in serverless environments (e.g. Vercel)
-}
+mountQueueDashboard(app);
 
 app.get("/", async (req, res) => {
-  const movies = await MoviesService.discover({});
-
-  sendResponse.ok(res, "Welcome to the API", movies);
+  sendResponse.ok(res, "Welcome to the API");
 });
 
 app.use("/api/v1", apiRouter);
@@ -52,5 +44,3 @@ app.use((_req, res) => {
 app.use(globalErrorHandler);
 
 export { app };
-
-export default app;

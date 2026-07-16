@@ -27,10 +27,10 @@ export const config = {
     tokenExpiryMinutes: env.TOKEN_EXPIRY_MINUTES,
     sessionExpiryDays: env.SESSION_EXPIRY_DAYS,
   },
-  bullboard: {
-    user: env.BULL_USER,
-    pass: env.BULL_PASS,
-    secret: env.BULL_SECRET,
+  queueDashboard: {
+    user: env.QUEUE_DASHBOARD_USER,
+    pass: env.QUEUE_DASHBOARD_PASS,
+    secret: env.QUEUE_DASHBOARD_SECRET,
   },
   app: {
     name: env.PROJECT_NAME,

@@ -3,13 +3,15 @@ import { createHash } from "node:crypto";
 
 import { config } from "@/core/config";
 
-import { LOGIN_PAGE } from "./bullboard.login";
+import { LOGIN_PAGE } from "./queue-dashboard.login";
 
-const COOKIE_NAME = "bull_token";
+const COOKIE_NAME = "queue_dashboard_token";
 
 const signToken = (): string => {
-  const payload = `${config.bullboard.user}:${Date.now()}`;
-  const hmac = createHash("sha256").update(`${payload}:${config.bullboard.secret}`).digest("hex");
+  const payload = `${config.queueDashboard.user}:${Date.now()}`;
+  const hmac = createHash("sha256")
+    .update(`${payload}:${config.queueDashboard.secret}`)
+    .digest("hex");
   return `${payload}:${hmac}`;
 };
 
@@ -19,7 +21,7 @@ const verifyToken = (token: string): boolean => {
   const payload = parts.slice(0, -1).join(":");
   const sig = parts[parts.length - 1]!;
   const expected = createHash("sha256")
-    .update(`${payload}:${config.bullboard.secret}`)
+    .update(`${payload}:${config.queueDashboard.secret}`)
     .digest("hex");
   return sig === expected;
 };
@@ -33,7 +35,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   // Login submit
   if (req.method === "POST" && req.path === "/login") {
     const { user, pass } = req.body ?? {};
-    if (user === config.bullboard.user && pass === config.bullboard.pass) {
+    if (user === config.queueDashboard.user && pass === config.queueDashboard.pass) {
       res.cookie(COOKIE_NAME, signToken(), {
         httpOnly: true,
         sameSite: "lax",

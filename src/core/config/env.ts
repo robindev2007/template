@@ -27,9 +27,9 @@ const envSchema = z.object({
   JWT_SECRET: z.string().default("dev-secret-change-in-production"),
   JWT_EXPIRES_IN: z.string().default("7d"),
 
-  BULL_USER: z.string().default("admin"),
-  BULL_PASS: z.string().default("admin"),
-  BULL_SECRET: z.string().default("bull-secret-change-in-production"),
+  QUEUE_DASHBOARD_USER: z.string().default("admin"),
+  QUEUE_DASHBOARD_PASS: z.string().default("admin"),
+  QUEUE_DASHBOARD_SECRET: z.string().default("bull-secret-change-in-production"),
 
   FRONTEND_URL: z.string().default("http://localhost:5173"),
 

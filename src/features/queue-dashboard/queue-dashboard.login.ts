@@ -3,7 +3,7 @@ export const LOGIN_PAGE = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign in — Bull Board</title>
+  <title>Sign in — Queue Dashboard</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -35,7 +35,7 @@ export const LOGIN_PAGE = `<!DOCTYPE html>
 </head>
 <body>
   <div class="card">
-    <h1>Bull Board</h1>
+    <h1>Queue Dashboard</h1>
     <p>Sign in to view queue dashboard</p>
     <form method="post" action="/admin/queues/login">
       <label for="user">Username</label>
